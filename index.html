@@ -1,31 +1,686 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <title>Button hover effect</title>
-  <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Varandani | Founder & Strategist</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0a;
+            --accent: #d1d1d1;
+            --text-main: #f5f5f5;
+            --text-muted: #888888;
+            --card-bg: rgba(20, 20, 20, 0.5);
+        }
 
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        canvas#webgl {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .editorial-title {
+            letter-spacing: -0.04em;
+            line-height: 0.85;
+        }
+
+        .section-padding {
+            padding-left: 8%;
+            padding-right: 8%;
+        }
+
+        .reveal-mask {
+            clip-path: inset(100% 0 0 0);
+        }
+
+        .custom-cursor {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        .btn-3d {
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-3d:hover {
+            background: rgba(255,255,255,1);
+            color: black;
+            border-color: transparent;
+        }
+
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+        
+        .parallax-img {
+            scale: 1.2;
+        }
+
+        .timeline-line {
+            width: 1px;
+            height: 0%;
+            background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .milestone-item::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 10px;
+            width: 9px;
+            height: 9px;
+            background: var(--bg-deep);
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        .skew-container {
+            will-change: transform;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .blueprint-step {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .blueprint-step:hover {
+            transform: translateX(8px);
+        }
+        
+        .vision-card {
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .vision-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .section-padding {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+        }
+    </style>
 </head>
-<body>
-<!-- partial:index.partial.html -->
-<div class="container">
-  <a class="button" href="#" style="--color:#1e9bff;">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    Button
-  </a>
- 
-  <a class="button" href="#" style="--color: #6eff3e;">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
-    Button
-  </a>
-</div>
-<!-- partial -->
-  
+<body class="antialiased">
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="webgl"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center section-padding py-8 mix-blend-difference">
+        <div class="text-sm font-medium tracking-widest uppercase">L. Varandani</div>
+        <div class="flex gap-12 text-xs uppercase tracking-widest text-muted">
+            <a href="#story" class="hover:text-white transition-colors">Story</a>
+            <a href="#milestones" class="hover:text-white transition-colors">Journey</a>
+            <a href="#blueprint" class="hover:text-white transition-colors">Blueprint</a>
+            <a href="#vision" class="hover:text-white transition-colors">Vision</a>
+            <a href="mailto:hello@luckyvarandani.com" class="hover:text-white transition-colors">Contact</a>
+        </div>
+    </nav>
+
+    <main class="skew-container">
+        <!-- PAGE 1: HERO -->
+        <section class="min-h-screen flex flex-col justify-center section-padding relative">
+            <div class="z-10 mt-20">
+                <div class="overflow-hidden">
+                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-6 hero-fade inline-block">Founder. Strategist. Builder.</h2>
+                </div>
+                <h1 class="editorial-title text-[clamp(4rem,12vw,12rem)] font-light mb-12 hero-fade">
+                    Lucky <br> Varandani
+                </h1>
+                <p class="max-w-md text-lg text-muted font-light leading-relaxed hero-fade">
+                    Orchestrating growth through architectural precision and strategic depth. A catalyst for modern enterprises navigating a volatile landscape.
+                </p>
+                <div class="mt-16 hero-fade flex gap-6 items-center">
+                    <a href="#story" class="btn-3d px-10 py-5 text-xs uppercase tracking-widest">
+                        The Foundation
+                    </a>
+                    <a href="#milestones" class="text-xs uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">
+                        The Journey
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hero Floating Visual -->
+            <div class="absolute right-[8%] top-1/2 -translate-y-1/2 w-1/4 hidden lg:block hero-image-trigger">
+                <div class="image-container rounded-sm shadow-2xl reveal-mask">
+                    <div class="w-full aspect-[4/5] bg-[#111] flex items-center justify-center text-muted text-[10px] uppercase tracking-widest overflow-hidden">
+                        <div class="parallax-img w-full h-full flex items-center justify-center bg-neutral-900 border border-white/5">
+                             <div class="text-center px-10">
+                                <span class="block mb-2 opacity-50">[ Visionary ]</span>
+                                <span class="block opacity-30 text-[8px]">LV / 001</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 2: FOUNDER STORY -->
+        <section id="story" class="min-h-screen flex items-center section-padding py-32 bg-[#0d0d0d]/30">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-24 items-center">
+                <div class="lg:col-span-6">
+                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-8 story-reveal">The Foundation</h2>
+                    <h3 class="text-4xl md:text-7xl font-light leading-tight mb-12 story-reveal">
+                        Constraints breed <br> creativity.
+                    </h3>
+                    <div class="space-y-8 text-lg text-muted font-light max-w-xl story-reveal">
+                        <p class="leading-relaxed">
+                            I studied in a school that wasn't on anyone's radar. Yet from childhood, business was my first language. At age 12, I began selling pencils and pens to senior students—earning ₹12,200 while others were learning algebra.
+                        </p>
+                        <p class="leading-relaxed">
+                            By 15, I helped my father establish and scale his factory from concept to operation. Today, that factory generates ₹3 Crore monthly revenue. This wasn't just a lesson in business—it was a masterclass in turning limitations into leverage.
+                        </p>
+                        <p class="leading-relaxed">
+                            Now, I'm building <strong>Turnaround Experts (TAE)</strong>—fully bootstrapped, already at ₹2.5 Lakhs revenue. This isn't just another venture; it's proof that execution beats pedigree every time.
+                        </p>
+                        <div class="pt-8 grid grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-white text-xs uppercase tracking-widest mb-2">Focus</h4>
+                                <p class="text-sm opacity-60">Turnaround & Scale Engineering</p>
+                            </div>
+                            <div>
+                                <h4 class="text-white text-xs uppercase tracking-widest mb-2">Mindset</h4>
+                                <p class="text-sm opacity-60">Constraint-Driven Innovation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-6">
+                    <div class="image-container group reveal-mask">
+                        <div class="w-full aspect-[16/10] bg-neutral-900 overflow-hidden">
+                             <div class="parallax-img w-full h-full bg-[#151515] flex items-center justify-center text-muted text-[10px] uppercase tracking-widest border border-white/5">
+                                <span class="opacity-50 tracking-[0.5em]">[ Bootstrapped Growth ]</span>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex justify-between text-[10px] uppercase tracking-[0.3em] text-muted/40">
+                        <span>01 / Factory Scale-up</span>
+                        <span>02 / TAE Venture</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 3: THE JOURNEY -->
+        <section id="milestones" class="min-h-screen section-padding py-32 relative">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-24 text-center milestone-reveal">The Journey</h2>
+                <div class="relative pl-12 border-l border-white/5">
+                    <div class="timeline-line"></div>
+                    
+                    <div class="milestone-item relative mb-32 milestone-reveal">
+                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2023 — Present</span>
+                        <h4 class="text-3xl font-light mb-6">Turnaround Experts</h4>
+                        <p class="max-w-2xl text-muted text-lg font-light">Building a fully bootstrapped venture focused on sustainable growth engineering. TAE has already achieved ₹2.5 Lakhs revenue, proving that disciplined execution trumps external funding.</p>
+                    </div>
+
+                    <div class="milestone-item relative mb-32 milestone-reveal">
+                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2017 — 2023</span>
+                        <h4 class="text-3xl font-light mb-6">Industrial Scale-up</h4>
+                        <p class="max-w-2xl text-muted text-lg font-light">Helped scale my father's factory from concept to ₹3 Crore monthly revenue operation. Learned firsthand how to build systems that sustain, not just scale—under real-world constraints.</p>
+                    </div>
+
+                    <div class="milestone-item relative milestone-reveal">
+                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2012 — 2014</span>
+                        <h4 class="text-3xl font-light mb-6">The First Venture</h4>
+                        <p class="max-w-2xl text-muted text-lg font-light">At age 12, started selling pencils and pens to senior students, earning ₹12,200. This early lesson in unit economics and customer discovery became the foundation of everything that followed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW PAGE: BLUEPRINT -->
+        <section id="blueprint" class="min-h-screen flex items-center section-padding py-32 bg-white/[0.02]">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12 blueprint-reveal">The Framework</h2>
+                <h3 class="text-5xl md:text-7xl font-light leading-tight mb-24 blueprint-reveal">
+                    The TAE Method: <br> Scaling with precision.
+                </h3>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-24">
+                    <div class="space-y-16">
+                        <div class="blueprint-step reveal-mask">
+                            <div class="flex items-start gap-8">
+                                <span class="text-5xl font-light text-white/20">01</span>
+                                <div>
+                                    <h4 class="text-2xl font-medium mb-4">Diagnosis & Baseline</h4>
+                                    <p class="text-muted text-lg font-light leading-relaxed">We start by mapping the entire operational canvas—identifying core bottlenecks, revenue leaks, and hidden opportunities. No assumptions, only data.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="blueprint-step reveal-mask">
+                            <div class="flex items-start gap-8">
+                                <span class="text-5xl font-light text-white/20">02</span>
+                                <div>
+                                    <h4 class="text-2xl font-medium mb-4">System Architecture</h4>
+                                    <p class="text-muted text-lg font-light leading-relaxed">Designing lean, interdependent systems that automate decision‑making and eliminate friction. Built to evolve, not to be replaced.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-16">
+                        <div class="blueprint-step reveal-mask">
+                            <div class="flex items-start gap-8">
+                                <span class="text-5xl font-light text-white/20">03</span>
+                                <div>
+                                    <h4 class="text-2xl font-medium mb-4">Execution Rigor</h4>
+                                    <p class="text-muted text-lg font-light leading-relaxed">Weekly cadence of measurable outcomes, not activities. We install accountability rhythms that keep velocity high and excuses at zero.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="blueprint-step reveal-mask">
+                            <div class="flex items-start gap-8">
+                                <span class="text-5xl font-light text-white/20">04</span>
+                                <div>
+                                    <h4 class="text-2xl font-medium mb-4">Sustainable Scale</h4>
+                                    <p class="text-muted text-lg font-light leading-relaxed">Transitioning from founder‑driven growth to a self‑sustaining engine. The goal isn't just growth—it's resilience that compounds over time.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-32 pt-12 border-t border-white/5 blueprint-reveal">
+                    <p class="text-muted text-lg max-w-3xl mx-auto text-center font-light">This framework has been pressure‑tested across factory floors and early‑stage ventures. It works because it's built from the ground up—not from textbook theory.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW PAGE: PRINCIPLES -->
+        <section class="min-h-screen flex items-center section-padding py-32 bg-white/[0.02]">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-32">
+                <div class="principle-reveal">
+                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12">Core Principles</h2>
+                    <h3 class="text-5xl md:text-7xl font-light leading-tight mb-12">How I build.</h3>
+                    <p class="text-muted text-lg max-w-md font-light">Success is not a lucky break; it is a series of intentional decisions made with high conviction and low ego.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-12">
+                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
+                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">01</span>
+                        <h4 class="text-xl font-medium mb-4">Extreme Ownership</h4>
+                        <p class="text-muted text-sm leading-relaxed">Accountability is the foundation of trust. Every outcome is a result of our actions or our inactions.</p>
+                    </div>
+                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
+                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">02</span>
+                        <h4 class="text-xl font-medium mb-4">First Principles</h4>
+                        <p class="text-muted text-sm leading-relaxed">Break every problem down to its fundamental truths. Deconstruct before you build.</p>
+                    </div>
+                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
+                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">03</span>
+                        <h4 class="text-xl font-medium mb-4">Dynamic Adaptability</h4>
+                        <p class="text-muted text-sm leading-relaxed">The plan is static; the execution must be fluid. Navigate the unknown with composure.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAGE 5: VISION / CTA -->
+        <section id="vision" class="min-h-screen flex flex-col justify-center section-padding relative py-32">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12 vision-reveal">Future Perspective</h2>
+                <h3 class="text-6xl md:text-[10rem] font-light leading-none mb-24 vision-reveal tracking-tighter">
+                    Vision 2030.
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-1 px-4 mb-32 vision-reveal">
+                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
+                        <h4 class="text-xs uppercase tracking-widest mb-6">500 Startups</h4>
+                        <p class="text-muted text-sm leading-relaxed">By 2030, Turnaround Experts will have helped 500 startups achieve sustainable, profitable growth—without dependency on venture capital.</p>
+                    </div>
+                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
+                        <h4 class="text-xs uppercase tracking-widest mb-6">Sustainable Scale</h4>
+                        <p class="text-muted text-sm leading-relaxed">Proving that bootstrapped, disciplined execution can outperform funded competitors. Profitability as a superpower, not an afterthought.</p>
+                    </div>
+                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
+                        <h4 class="text-xs uppercase tracking-widest mb-6">Ecosystem Impact</h4>
+                        <p class="text-muted text-sm leading-relaxed">Creating a new generation of founders who build for longevity, not just exits. Leaving a legacy of resilience and strategic depth.</p>
+                    </div>
+                </div>
+                
+                <div class="vision-reveal pt-12">
+                    <a href="mailto:hello@luckyvarandani.com" class="group inline-flex flex-col items-center">
+                        <span class="text-xs uppercase tracking-[0.4em] mb-6 text-muted group-hover:text-white transition-colors">Initiate Collaboration</span>
+                        <div class="flex items-center gap-4">
+                            <div class="h-[1px] w-12 bg-white/20 group-hover:w-24 transition-all duration-700"></div>
+                            <span class="text-2xl font-light">hello@luckyvarandani.com</span>
+                            <div class="h-[1px] w-12 bg-white/20 group-hover:w-24 transition-all duration-700"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <footer class="mt-48 w-full flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.3em] text-muted/30 gap-6">
+                <div>© 2024 Lucky Varandani — All Rights Reserved</div>
+                <div class="flex gap-12">
+                    <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+                    <a href="#" class="hover:text-white transition-colors">Twitter / X</a>
+                    <a href="#" class="hover:text-white transition-colors">Notes</a>
+                </div>
+                <div>Designed for the top 1%</div>
+            </footer>
+        </section>
+    </main>
+
+    <script>
+        // --- SMOOTH SCROLL (LENIS) ---
+        const lenis = new Lenis({
+            lerp: 0.08,
+            wheelMultiplier: 1.2,
+        });
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // --- SKEW ON SCROLL ---
+        const skewContainer = document.querySelector('.skew-container');
+        let currentScroll = 0;
+        let skewVelocity = 0;
+        lenis.on('scroll', (e) => {
+            skewVelocity = e.velocity * 0.02;
+            gsap.to(skewContainer, {
+                skewY: gsap.utils.clamp(-1, 1, skewVelocity),
+                duration: 0.5,
+                ease: "power3.out"
+            });
+            // Return to 0
+            gsap.to(skewContainer, {
+                skewY: 0,
+                duration: 1,
+                delay: 0.1,
+                ease: "expo.out"
+            });
+        });
+
+        // --- THREE.JS BACKGROUND ---
+        const canvas = document.querySelector('#webgl');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Group for all elements
+        const sceneGroup = new THREE.Group();
+        scene.add(sceneGroup);
+
+        // Main geometric element
+        const geometry = new THREE.IcosahedronGeometry(2, 0);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xffffff, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.1
+        });
+        const mainMesh = new THREE.Mesh(geometry, material);
+        sceneGroup.add(mainMesh);
+
+        // Random floating shards
+        const shardGeom = new THREE.PlaneGeometry(0.5, 0.5);
+        for(let i=0; i<15; i++) {
+            const shard = new THREE.Mesh(shardGeom, material);
+            shard.position.set(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 5
+            );
+            shard.rotation.set(Math.random(), Math.random(), Math.random());
+            sceneGroup.add(shard);
+        }
+
+        // Starfield
+        const pointsGeometry = new THREE.BufferGeometry();
+        const count = 1000;
+        const positions = new Float32Array(count * 3);
+        for(let i=0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 20;
+        }
+        pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const pointsMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0x888888, transparent: true, opacity: 0.5 });
+        const particles = new THREE.Points(pointsGeometry, pointsMaterial);
+        scene.add(particles);
+
+        // Lights
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(2, 3, 4);
+        scene.add(pointLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+
+        camera.position.z = 5;
+
+        // Interaction
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+            
+            gsap.to('#cursor', { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power3.out" });
+        });
+
+        const animate = () => {
+            const time = performance.now() * 0.0005;
+            mainMesh.rotation.y = time * 0.2;
+            mainMesh.rotation.x = time * 0.1;
+            
+            sceneGroup.rotation.y += (mouseX * 0.1 - sceneGroup.rotation.y) * 0.05;
+            sceneGroup.rotation.x += (-mouseY * 0.1 - sceneGroup.rotation.x) * 0.05;
+            
+            particles.rotation.y = time * 0.05;
+            
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        };
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- GSAP CORE ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Reveal Hero
+        const tl = gsap.timeline();
+        tl.from('.hero-fade', {
+            y: 60,
+            opacity: 0,
+            duration: 1.5,
+            stagger: 0.1,
+            ease: "expo.out",
+            delay: 0.2
+        });
+
+        // Parallax for all images
+        document.querySelectorAll('.parallax-img').forEach(img => {
+            gsap.to(img, {
+                yPercent: -20,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: img.parentElement,
+                    start: "top bottom",
+                    scrub: true
+                }
+            });
+        });
+
+        // Mask Reveal for images
+        document.querySelectorAll('.reveal-mask').forEach(mask => {
+            gsap.to(mask, {
+                clipPath: 'inset(0% 0 0 0)',
+                duration: 1.5,
+                ease: "expo.inOut",
+                scrollTrigger: {
+                    trigger: mask,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // Story Reveal
+        gsap.from('.story-reveal', {
+            y: 50,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: '#story',
+                start: "top 70%",
+            }
+        });
+
+        // Timeline Line Grow
+        gsap.to('.timeline-line', {
+            height: '100%',
+            ease: "none",
+            scrollTrigger: {
+                trigger: '#milestones',
+                start: "top 50%",
+                end: "bottom 50%",
+                scrub: true
+            }
+        });
+
+        // Milestones Reveal
+        gsap.from('.milestone-reveal', {
+            y: 40,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.3,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: '#milestones',
+                start: "top 60%",
+            }
+        });
+
+        // Principles Grid Reveal
+        gsap.from('.principle-reveal', {
+            y: 30,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: '.principle-reveal',
+                start: "top 80%",
+            }
+        });
+
+        // Blueprint Reveal
+        gsap.from('.blueprint-reveal', {
+            y: 50,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: '#blueprint',
+                start: "top 70%",
+            }
+        });
+
+        // Blueprint Steps Stagger
+        gsap.from('.blueprint-step', {
+            y: 40,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.3,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: '#blueprint',
+                start: "top 60%",
+            }
+        });
+
+        // Vision Reveal
+        gsap.from('.vision-reveal', {
+            y: 60,
+            opacity: 0,
+            duration: 1.5,
+            stagger: 0.2,
+            ease: "expo.out",
+            scrollTrigger: {
+                trigger: '#vision',
+                start: "top 70%",
+            }
+        });
+
+        // 3D Camera Shift on Scroll
+        gsap.to(camera.position, {
+            z: 8,
+            y: -2,
+            scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1
+            }
+        });
+
+        // Magnetic Effect for Buttons and Nav
+        const magneticElements = document.querySelectorAll('.btn-3d, nav a');
+        magneticElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                gsap.to(el, { x, y, duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+            });
+        });
+
+        // Cursor scaling
+        const cursor = document.querySelector('#cursor');
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 4, opacity: 0.1 }));
+            el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, opacity: 1 }));
+        });
+
+    </script>
 </body>
 </html>
