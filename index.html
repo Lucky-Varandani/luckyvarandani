@@ -1,685 +1,874 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="no-js">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Varandani | Founder & Strategist</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUCKY VARANDANI | TAE SYSTEMS</title>
+    <meta name="description" content="Founder Portfolio of Lucky Varandani - The Architect of Systems.">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&family=Syncopate:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/SplitText.min.js"></script>
+
     <style>
+        /* -----------------------------------------------------------
+           1. RESET & VARIABLES
+           ----------------------------------------------------------- */
         :root {
-            --bg-deep: #0a0a0a;
-            --accent: #d1d1d1;
-            --text-main: #f5f5f5;
-            --text-muted: #888888;
-            --card-bg: rgba(20, 20, 20, 0.5);
+            --bg-color: #030303;
+            --bg-secondary: #0a0a0a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #888888;
+            --accent-color: #ffffff;
+            --accent-dim: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            
+            --font-display: 'Syne', sans-serif;
+            --font-tech: 'Syncopate', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+            
+            --spacing-container: 4vw;
+            --spacing-section: 12rem;
         }
 
-        body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
+            cursor: none; /* Custom cursor everywhere */
         }
 
-        canvas#webgl {
+        html, body {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* -----------------------------------------------------------
+           2. UTILITIES & TYPOGRAPHY
+           ----------------------------------------------------------- */
+        .container {
+            width: 100%;
+            padding: 0 var(--spacing-container);
+            margin: 0 auto;
+            max-width: 1920px;
+        }
+
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; }
+        .flex-col { display: flex; flex-direction: column; }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.9;
+        }
+
+        .display-text {
+    /* Adjusted clamp to ensure "VARANDANI" doesn't overflow on small screens */
+    font-size: clamp(2.5rem, 11vw, 16rem); 
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+    position: relative;
+    z-index: 2;
+    mix-blend-mode: exclusion;
+    width: 100%;
+    text-align: center;
+}
+
+        .outline-text {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.4);
+            color: transparent;
+            transition: color 0.5s ease;
+        }
+        .outline-text:hover {
+            color: var(--accent-color);
+        }
+
+        .label {
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .link-reset {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* -----------------------------------------------------------
+           3. UI COMPONENTS (CURSOR, NAV, LOADER)
+           ----------------------------------------------------------- */
+        
+        /* Custom Cursor */
+        #cursor {
             position: fixed;
-            top: 0;
-            left: 0;
-            outline: none;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: difference;
+        }
+        #cursor.hovered {
+            width: 60px; height: 60px;
+            background: #fff;
+            border-color: #fff;
+            mix-blend-mode: difference;
+        }
+        #cursor-dot {
+            position: fixed;
+            top: 0; left: 0;
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        /* Loader */
+        .loader-wrap {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: #000;
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .loader-bar-bg {
+            width: 300px;
+            height: 2px;
+            background: #333;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .loader-bar-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            width: 0%;
+            background: #fff;
+        }
+        .loader-text {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            color: #fff;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            padding: 2rem var(--spacing-container);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 900;
+            mix-blend-mode: difference;
+        }
+        .logo {
+            font-family: var(--font-tech);
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: -0.05em;
+        }
+        .nav-link {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0%; height: 1px;
+            background: #fff;
+            transition: width 0.4s var(--ease-out-expo);
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Floating Contact Dock (Bottom) */
+        .dock-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 800;
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(12px);
+            padding: 0.5rem 0.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+        }
+        .dock-icon {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .dock-icon svg { width: 20px; height: 20px; fill: #fff; }
+        .dock-icon:hover {
+            background: #fff;
+            transform: translateY(-5px) scale(1.1);
+        }
+        .dock-icon:hover svg { fill: #000; }
+
+        /* -----------------------------------------------------------
+           4. BACKGROUND CANVAS
+           ----------------------------------------------------------- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             z-index: -1;
+            opacity: 0.3;
+        }
+        .noise {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: 999;
             pointer-events: none;
         }
 
-        .editorial-title {
-            letter-spacing: -0.04em;
+        /* -----------------------------------------------------------
+           5. SECTION STYLES
+           ----------------------------------------------------------- */
+        
+        /* HERO */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            padding-top: 10vh;
+        }
+
+        .hero-line {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
             line-height: 0.85;
         }
 
-        .section-padding {
-            padding-left: 8%;
-            padding-right: 8%;
+        .hero-image-block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Standard centering combined with your GSAP initial state */
+    transform: translate(-50%, -50%) scale(0.5);
+    width: 50vw; /* Slightly narrower to breathe between names */
+    height: 90vh;
+    z-index: 1;
+    opacity: 0;
+    overflow: hidden;
+    border-radius: 4px;
+    pointer-events: none; /* Allows clicks to pass through to text/links */
+}
+       .hero-image-block img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.2);
+}
+/* Mobile Specific Fix for long names */
+@media (max-width: 384px) {
+   .display-text {
+    /* Using 10vw instead of 13vw ensures the 9 letters of 'VARANDANI' stay within bounds */
+    font-size: clamp(1.25rem, 5vw, 8rem); 
+    letter-spacing: -0.05em; /* Tighter tracking helps fit long words */
+    color: var(--text-primary);
+    position: relative;
+    z-index: 2;
+    mix-blend-mode: exclusion;
+    white-space: nowrap; /* Prevents the word from breaking into two lines */
+    text-align: center;
+}
+
+/* Mobile Tweak */
+@media (max-width: 768px) {
+    .display-text {
+        font-size: 13vw; /* Slightly larger on mobile but still safe for 9 letters */
+        letter-spacing: -0.02em;
+    }
+}
+    .hero-image-block {
+        width: 50vw;
+        height: 30vh;
+    }
+}
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            right: var(--spacing-container);
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            opacity: 0.5;
+        }
+        .scroll-line {
+            width: 50px; height: 1px; background: #fff;
         }
 
-        .reveal-mask {
-            clip-path: inset(100% 0 0 0);
-        }
-
-        .custom-cursor {
-            width: 12px;
-            height: 12px;
-            background: white;
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-        }
-
-        .btn-3d {
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        /* MANIFESTO */
+        .section-manifesto {
+            padding: var(--spacing-section) 0;
             position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .manifesto-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 4rem;
+        }
+        .manifesto-text {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 300;
+            line-height: 1.4;
+        }
+        .highlight {
+            color: #fff;
+            font-weight: 500;
+            border-bottom: 1px solid #fff;
+        }
+
+        /* JOURNEY (Timeline) */
+        .section-journey {
+            padding: 0 0 var(--spacing-section) 0;
+        }
+        .journey-item {
+            border-top: 1px solid var(--border-color);
+            padding: 4rem 0;
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            align-items: flex-start;
+            transition: background 0.3s ease;
+        }
+        .journey-item:hover {
             background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(10px);
+        }
+        .journey-year {
+            font-family: var(--font-tech);
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        .journey-content h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .journey-content p {
+            max-width: 600px;
+            color: var(--text-secondary);
+        }
+        .journey-stat {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            text-align: right;
+            color: var(--text-primary);
         }
 
-        .btn-3d:hover {
-            background: rgba(255,255,255,1);
-            color: black;
-            border-color: transparent;
+        /* VISION / CARDS */
+        .section-vision {
+            padding-bottom: var(--spacing-section);
         }
-
-        .image-container {
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        .vision-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 3rem 2rem;
             position: relative;
             overflow: hidden;
-            background: #111;
-        }
-        
-        .parallax-img {
-            scale: 1.2;
-        }
-
-        .timeline-line {
-            width: 1px;
-            height: 0%;
-            background: linear-gradient(to bottom, transparent, var(--accent), transparent);
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .milestone-item::before {
-            content: '';
-            position: absolute;
-            left: -4px;
-            top: 10px;
-            width: 9px;
-            height: 9px;
-            background: var(--bg-deep);
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            z-index: 10;
-        }
-
-        .skew-container {
-            will-change: transform;
-        }
-
-        /* Hide scrollbar */
-        ::-webkit-scrollbar {
-            display: none;
-        }
-
-        .blueprint-step {
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .blueprint-step:hover {
-            transform: translateX(8px);
-        }
-        
-        .vision-card {
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: transform 0.4s ease;
         }
         .vision-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(255,255,255,0.1);
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* FOOTER */
+        .section-footer {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: #050505;
+        }
+        .footer-cta {
+            font-size: clamp(3rem, 10vw, 10rem);
+            line-height: 1;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        .footer-cta:hover {
+            transform: scale(1.05);
+        }
+        .credits {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 0.8rem;
+            color: #444;
+            font-family: var(--font-tech);
+        }
+
+        /* -----------------------------------------------------------
+           6. RESPONSIVE ADJUSTMENTS
+           ----------------------------------------------------------- */
+        @media (max-width: 1024px) {
+            .manifesto-grid { grid-template-columns: 1fr; }
+            .journey-item { grid-template-columns: 1fr; gap: 1rem; }
+            .journey-stat { text-align: left; font-size: 2rem; }
+            .cards-container { grid-template-columns: 1fr; }
+            .hero-image-block { width: 60vw; height: 30vh; }
         }
         
         @media (max-width: 768px) {
-            .section-padding {
-                padding-left: 5%;
-                padding-right: 5%;
-            }
+            :root { --spacing-container: 1.5rem; }
+            .display-text { font-size: 16vw; } /* Ensure fit on mobile */
+            .hero-line { flex-direction: column; align-items: center; }
+            .nav-bar { justify-content: center; }
+            .nav-links-group { display: none; } /* Hide menu links on mobile, keep logo */
         }
     </style>
 </head>
-<body class="antialiased">
-    <div class="custom-cursor" id="cursor"></div>
-    <canvas id="webgl"></canvas>
+<body>
 
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center section-padding py-8 mix-blend-difference">
-        <div class="text-sm font-medium tracking-widest uppercase">L. Varandani</div>
-        <div class="flex gap-12 text-xs uppercase tracking-widest text-muted">
-            <a href="#story" class="hover:text-white transition-colors">Story</a>
-            <a href="#milestones" class="hover:text-white transition-colors">Journey</a>
-            <a href="#blueprint" class="hover:text-white transition-colors">Blueprint</a>
-            <a href="#vision" class="hover:text-white transition-colors">Vision</a>
-            <a href="mailto:hello@luckyvarandani.com" class="hover:text-white transition-colors">Contact</a>
+    <div class="noise"></div>
+
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="loader-wrap">
+        <div class="loader-text">INITIALIZING SYSTEMS...</div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar-fill"></div>
         </div>
+        <div class="loader-text" style="margin-top: 10px;" id="loader-percent">00%</div>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="logo hover-target">L V</div>
+        <div class="logo hover-target" style="font-size: 0.9rem; color: var(--text-secondary);">EST. 2024</div>
     </nav>
 
-    <main class="skew-container">
-        <!-- PAGE 1: HERO -->
-        <section class="min-h-screen flex flex-col justify-center section-padding relative">
-            <div class="z-10 mt-20">
-                <div class="overflow-hidden">
-                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-6 hero-fade inline-block">Founder. Strategist. Builder.</h2>
-                </div>
-                <h1 class="editorial-title text-[clamp(4rem,12vw,12rem)] font-light mb-12 hero-fade">
-                    Lucky <br> Varandani
-                </h1>
-                <p class="max-w-md text-lg text-muted font-light leading-relaxed hero-fade">
-                    Orchestrating growth through architectural precision and strategic depth. A catalyst for modern enterprises navigating a volatile landscape.
-                </p>
-                <div class="mt-16 hero-fade flex gap-6 items-center">
-                    <a href="#story" class="btn-3d px-10 py-5 text-xs uppercase tracking-widest">
-                        The Foundation
-                    </a>
-                    <a href="#milestones" class="text-xs uppercase tracking-widest border-b border-white/20 pb-1 hover:border-white transition-all">
-                        The Journey
-                    </a>
-                </div>
-            </div>
+    <main id="smooth-wrapper">
+        <div id="smooth-content">
             
-            <!-- Hero Floating Visual -->
-            <div class="absolute right-[8%] top-1/2 -translate-y-1/2 w-1/4 hidden lg:block hero-image-trigger">
-                <div class="image-container rounded-sm shadow-2xl reveal-mask">
-                    <div class="w-full aspect-[4/5] bg-[#111] flex items-center justify-center text-muted text-[10px] uppercase tracking-widest overflow-hidden">
-                        <div class="parallax-img w-full h-full flex items-center justify-center bg-neutral-900 border border-white/5">
-                             <div class="text-center px-10">
-                                <span class="block mb-2 opacity-50">[ Visionary ]</span>
-                                <span class="block opacity-30 text-[8px]">LV / 001</span>
-                            </div>
-                        </div>
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-line">
+                        <h1 class="display-text outline-text hero-text-1">LUCKY</h1>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 2: FOUNDER STORY -->
-        <section id="story" class="min-h-screen flex items-center section-padding py-32 bg-[#0d0d0d]/30">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-24 items-center">
-                <div class="lg:col-span-6">
-                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-8 story-reveal">The Foundation</h2>
-                    <h3 class="text-4xl md:text-7xl font-light leading-tight mb-12 story-reveal">
-                        Constraints breed <br> creativity.
-                    </h3>
-                    <div class="space-y-8 text-lg text-muted font-light max-w-xl story-reveal">
-                        <p class="leading-relaxed">
-                            I studied in a school that wasn't on anyone's radar. Yet from childhood, business was my first language. At age 12, I began selling pencils and pens to senior students—earning ₹12,200 while others were learning algebra.
-                        </p>
-                        <p class="leading-relaxed">
-                            By 15, I helped my father establish and scale his factory from concept to operation. Today, that factory generates ₹3 Crore monthly revenue. This wasn't just a lesson in business—it was a masterclass in turning limitations into leverage.
-                        </p>
-                        <p class="leading-relaxed">
-                            Now, I'm building <strong>Turnaround Experts (TAE)</strong>—fully bootstrapped, already at ₹2.5 Lakhs revenue. This isn't just another venture; it's proof that execution beats pedigree every time.
-                        </p>
-                        <div class="pt-8 grid grid-cols-2 gap-8">
-                            <div>
-                                <h4 class="text-white text-xs uppercase tracking-widest mb-2">Focus</h4>
-                                <p class="text-sm opacity-60">Turnaround & Scale Engineering</p>
-                            </div>
-                            <div>
-                                <h4 class="text-white text-xs uppercase tracking-widest mb-2">Mindset</h4>
-                                <p class="text-sm opacity-60">Constraint-Driven Innovation</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="lg:col-span-6">
-                    <div class="image-container group reveal-mask">
-                        <div class="w-full aspect-[16/10] bg-neutral-900 overflow-hidden">
-                             <div class="parallax-img w-full h-full bg-[#151515] flex items-center justify-center text-muted text-[10px] uppercase tracking-widest border border-white/5">
-                                <span class="opacity-50 tracking-[0.5em]">[ Bootstrapped Growth ]</span>
-                             </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-between text-[10px] uppercase tracking-[0.3em] text-muted/40">
-                        <span>01 / Factory Scale-up</span>
-                        <span>02 / TAE Venture</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 3: THE JOURNEY -->
-        <section id="milestones" class="min-h-screen section-padding py-32 relative">
-            <div class="max-w-6xl mx-auto">
-                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-24 text-center milestone-reveal">The Journey</h2>
-                <div class="relative pl-12 border-l border-white/5">
-                    <div class="timeline-line"></div>
                     
-                    <div class="milestone-item relative mb-32 milestone-reveal">
-                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2023 — Present</span>
-                        <h4 class="text-3xl font-light mb-6">Turnaround Experts</h4>
-                        <p class="max-w-2xl text-muted text-lg font-light">Building a fully bootstrapped venture focused on sustainable growth engineering. TAE has already achieved ₹2.5 Lakhs revenue, proving that disciplined execution trumps external funding.</p>
+                    <div class="hero-image-block">
+                        <img src="luckyvarandani.jpg" alt="Lucky Varandani">
                     </div>
-
-                    <div class="milestone-item relative mb-32 milestone-reveal">
-                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2017 — 2023</span>
-                        <h4 class="text-3xl font-light mb-6">Industrial Scale-up</h4>
-                        <p class="max-w-2xl text-muted text-lg font-light">Helped scale my father's factory from concept to ₹3 Crore monthly revenue operation. Learned firsthand how to build systems that sustain, not just scale—under real-world constraints.</p>
-                    </div>
-
-                    <div class="milestone-item relative milestone-reveal">
-                        <span class="text-[10px] uppercase tracking-widest text-muted mb-4 block">2012 — 2014</span>
-                        <h4 class="text-3xl font-light mb-6">The First Venture</h4>
-                        <p class="max-w-2xl text-muted text-lg font-light">At age 12, started selling pencils and pens to senior students, earning ₹12,200. This early lesson in unit economics and customer discovery became the foundation of everything that followed.</p>
+                    <div class="container">
+                    <div class="hero-line">
+                        <h1 class="display-text outline-text hero-text-1">VARANDANI</h1>
                     </div>
                 </div>
-            </div>
-        </section>
+                </div>
 
-        <!-- NEW PAGE: BLUEPRINT -->
-        <section id="blueprint" class="min-h-screen flex items-center section-padding py-32 bg-white/[0.02]">
-            <div class="max-w-7xl mx-auto">
-                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12 blueprint-reveal">The Framework</h2>
-                <h3 class="text-5xl md:text-7xl font-light leading-tight mb-24 blueprint-reveal">
-                    The TAE Method: <br> Scaling with precision.
-                </h3>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-24">
-                    <div class="space-y-16">
-                        <div class="blueprint-step reveal-mask">
-                            <div class="flex items-start gap-8">
-                                <span class="text-5xl font-light text-white/20">01</span>
-                                <div>
-                                    <h4 class="text-2xl font-medium mb-4">Diagnosis & Baseline</h4>
-                                    <p class="text-muted text-lg font-light leading-relaxed">We start by mapping the entire operational canvas—identifying core bottlenecks, revenue leaks, and hidden opportunities. No assumptions, only data.</p>
-                                </div>
-                            </div>
+                <div class="scroll-hint">
+                    <div class="scroll-line"></div>
+                    SCROLL TO EXPLORE
+                </div>
+            </section>
+
+            <section class="section-manifesto" id="manifesto">
+                <div class="container">
+                    <div class="manifesto-grid">
+                        <div>
+                            <span class="label">The Philosophy</span>
                         </div>
-                        <div class="blueprint-step reveal-mask">
-                            <div class="flex items-start gap-8">
-                                <span class="text-5xl font-light text-white/20">02</span>
-                                <div>
-                                    <h4 class="text-2xl font-medium mb-4">System Architecture</h4>
-                                    <p class="text-muted text-lg font-light leading-relaxed">Designing lean, interdependent systems that automate decision‑making and eliminate friction. Built to evolve, not to be replaced.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-16">
-                        <div class="blueprint-step reveal-mask">
-                            <div class="flex items-start gap-8">
-                                <span class="text-5xl font-light text-white/20">03</span>
-                                <div>
-                                    <h4 class="text-2xl font-medium mb-4">Execution Rigor</h4>
-                                    <p class="text-muted text-lg font-light leading-relaxed">Weekly cadence of measurable outcomes, not activities. We install accountability rhythms that keep velocity high and excuses at zero.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="blueprint-step reveal-mask">
-                            <div class="flex items-start gap-8">
-                                <span class="text-5xl font-light text-white/20">04</span>
-                                <div>
-                                    <h4 class="text-2xl font-medium mb-4">Sustainable Scale</h4>
-                                    <p class="text-muted text-lg font-light leading-relaxed">Transitioning from founder‑driven growth to a self‑sustaining engine. The goal isn't just growth—it's resilience that compounds over time.</p>
-                                </div>
-                            </div>
+                        <div>
+                            <p class="manifesto-text">
+                                Success isn't magic. It's <span class="highlight">engineering</span>.
+                                <br><br>
+                                In a world obsessed with noise, we build silence. We build systems that function without chaos. From selling pens in Class 6 to scaling factories to <span class="highlight">₹3 Crore/month</span>, the principle remains unchanged:
+                                <br><br>
+                                <span style="color: #fff; font-family: var(--font-display);">Execution is the only currency.</span>
+                            </p>
                         </div>
                     </div>
                 </div>
-                <div class="mt-32 pt-12 border-t border-white/5 blueprint-reveal">
-                    <p class="text-muted text-lg max-w-3xl mx-auto text-center font-light">This framework has been pressure‑tested across factory floors and early‑stage ventures. It works because it's built from the ground up—not from textbook theory.</p>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- NEW PAGE: PRINCIPLES -->
-        <section class="min-h-screen flex items-center section-padding py-32 bg-white/[0.02]">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-32">
-                <div class="principle-reveal">
-                    <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12">Core Principles</h2>
-                    <h3 class="text-5xl md:text-7xl font-light leading-tight mb-12">How I build.</h3>
-                    <p class="text-muted text-lg max-w-md font-light">Success is not a lucky break; it is a series of intentional decisions made with high conviction and low ego.</p>
-                </div>
-                <div class="grid grid-cols-1 gap-12">
-                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
-                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">01</span>
-                        <h4 class="text-xl font-medium mb-4">Extreme Ownership</h4>
-                        <p class="text-muted text-sm leading-relaxed">Accountability is the foundation of trust. Every outcome is a result of our actions or our inactions.</p>
-                    </div>
-                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
-                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">02</span>
-                        <h4 class="text-xl font-medium mb-4">First Principles</h4>
-                        <p class="text-muted text-sm leading-relaxed">Break every problem down to its fundamental truths. Deconstruct before you build.</p>
-                    </div>
-                    <div class="p-12 border border-white/5 group hover:bg-white/5 transition-colors principle-reveal">
-                        <span class="text-3xl font-light mb-6 block text-white/20 group-hover:text-white transition-colors">03</span>
-                        <h4 class="text-xl font-medium mb-4">Dynamic Adaptability</h4>
-                        <p class="text-muted text-sm leading-relaxed">The plan is static; the execution must be fluid. Navigate the unknown with composure.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PAGE 5: VISION / CTA -->
-        <section id="vision" class="min-h-screen flex flex-col justify-center section-padding relative py-32">
-            <div class="max-w-5xl mx-auto text-center">
-                <h2 class="text-xs uppercase tracking-[0.4em] text-muted mb-12 vision-reveal">Future Perspective</h2>
-                <h3 class="text-6xl md:text-[10rem] font-light leading-none mb-24 vision-reveal tracking-tighter">
-                    Vision 2030.
-                </h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-1 px-4 mb-32 vision-reveal">
-                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
-                        <h4 class="text-xs uppercase tracking-widest mb-6">500 Startups</h4>
-                        <p class="text-muted text-sm leading-relaxed">By 2030, Turnaround Experts will have helped 500 startups achieve sustainable, profitable growth—without dependency on venture capital.</p>
-                    </div>
-                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
-                        <h4 class="text-xs uppercase tracking-widest mb-6">Sustainable Scale</h4>
-                        <p class="text-muted text-sm leading-relaxed">Proving that bootstrapped, disciplined execution can outperform funded competitors. Profitability as a superpower, not an afterthought.</p>
-                    </div>
-                    <div class="vision-card p-12 bg-white/[0.01] border border-white/5">
-                        <h4 class="text-xs uppercase tracking-widest mb-6">Ecosystem Impact</h4>
-                        <p class="text-muted text-sm leading-relaxed">Creating a new generation of founders who build for longevity, not just exits. Leaving a legacy of resilience and strategic depth.</p>
-                    </div>
-                </div>
-                
-                <div class="vision-reveal pt-12">
-                    <a href="mailto:hello@luckyvarandani.com" class="group inline-flex flex-col items-center">
-                        <span class="text-xs uppercase tracking-[0.4em] mb-6 text-muted group-hover:text-white transition-colors">Initiate Collaboration</span>
-                        <div class="flex items-center gap-4">
-                            <div class="h-[1px] w-12 bg-white/20 group-hover:w-24 transition-all duration-700"></div>
-                            <span class="text-2xl font-light">hello@luckyvarandani.com</span>
-                            <div class="h-[1px] w-12 bg-white/20 group-hover:w-24 transition-all duration-700"></div>
+            <section class="section-journey" id="journey">
+                <div class="container">
+                    <span class="label" style="margin-bottom: 4rem; display:block;">The Timeline</span>
+                    
+                    <div class="journey-item hover-target">
+                        <span class="journey-year">CLASS 06</span>
+                        <div class="journey-content">
+                            <h3>Value Over Marks</h3>
+                            <p>While peers chased grades, the first venture began. Selling stationery to seniors taught the fundamental lesson of supply and demand.</p>
                         </div>
-                    </a>
+                        <div class="journey-stat">₹12,200</div>
+                    </div>
+
+                    <div class="journey-item hover-target">
+                        <span class="journey-year">AGE 15</span>
+                        <div class="journey-content">
+                            <h3>Into The Fire</h3>
+                            <p>Stepped into the family factory. No handouts. Helped establish and scale operations through sheer discipline and process optimization.</p>
+                        </div>
+                        <div class="journey-stat">₹3 CR/MO</div>
+                    </div>
+
+                    <div class="journey-item hover-target">
+                        <span class="journey-year">PRESENT</span>
+                        <div class="journey-content">
+                            <h3>Turnaround Experts</h3>
+                            <p>Building TAE. A fully bootstrapped consulting vessel helping startups navigate the chaos of scaling.</p>
+                        </div>
+                        <div class="journey-stat">₹2.5 LAKH</div>
+                    </div>
                 </div>
-            </div>
-            
-            <footer class="mt-48 w-full flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.3em] text-muted/30 gap-6">
-                <div>© 2024 Lucky Varandani — All Rights Reserved</div>
-                <div class="flex gap-12">
-                    <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
-                    <a href="#" class="hover:text-white transition-colors">Twitter / X</a>
-                    <a href="#" class="hover:text-white transition-colors">Notes</a>
+            </section>
+
+            <section class="section-vision" id="vision">
+                <div class="container">
+                    <div class="flex-between">
+                        <h2 style="font-size: 3rem;">THE BLUEPRINT</h2>
+                        <span class="label">VISION 2030</span>
+                    </div>
+
+                    <div class="cards-container">
+                        <div class="vision-card hover-target">
+                            <span class="card-icon">⟡</span>
+                            <h3 class="card-title">Restraint</h3>
+                            <p style="color: #888;">Doing less, but better. Eliminating the non-essential to focus on high-leverage activities.</p>
+                        </div>
+                        <div class="vision-card hover-target">
+                            <span class="card-icon">◈</span>
+                            <h3 class="card-title">Systems</h3>
+                            <p style="color: #888;">People fail. Systems don't. We build robust frameworks that operate independently of motivation.</p>
+                        </div>
+                        <div class="vision-card hover-target">
+                            <span class="card-icon">✦</span>
+                            <h3 class="card-title">Impact</h3>
+                            <p style="color: #888;">Goal: 500 Startups. Not just growing them, but ensuring they have the DNA to survive.</p>
+                        </div>
+                    </div>
                 </div>
-                <div>Designed for the top 1%</div>
-            </footer>
-        </section>
+            </section>
+
+            <section class="section-footer">
+                <span class="label">INITIATE CONTACT</span>
+                <a href="https://wa.me/918401635015" target="_blank" class="link-reset">
+                    <h2 class="footer-cta hover-target">LET'S BUILD</h2>
+                </a>
+                <p style="color: #666; max-width: 400px; margin-bottom: 2rem;">
+                    Ready to turn chaos into order? The systems are ready.
+                </p>
+                <div class="credits">
+                    © 2026 LUCKY VARANDANI | ALL RIGHTS RESERVED
+                </div>
+            </section>
+        </div>
     </main>
 
+    <div class="dock-container">
+        <a href="https://wa.me/918401635015" target="_blank" class="dock-icon hover-target" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.698c1.005.572 1.913.846 3.037.844 3.182 0 5.768-2.586 5.768-5.766.001-3.181-2.587-5.767-5.769-5.767zm0 10.334c-1.018.001-1.848-.255-2.731-.735l-.196-.108-1.574.414.42-1.533-.127-.202c-.54-.849-.838-1.666-.838-2.637 0-2.614 2.13-4.741 4.745-4.741 2.615 0 4.745 2.126 4.746 4.74 0 2.615-2.131 4.742-4.745 4.742z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/varandani._31?igsh=dncxYjk5NXF5aDJk" target="_blank" class="dock-icon hover-target" title="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+    </div>
+
     <script>
-        // --- SMOOTH SCROLL (LENIS) ---
-        const lenis = new Lenis({
-            lerp: 0.08,
-            wheelMultiplier: 1.2,
-        });
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
-        // --- SKEW ON SCROLL ---
-        const skewContainer = document.querySelector('.skew-container');
-        let currentScroll = 0;
-        let skewVelocity = 0;
-        lenis.on('scroll', (e) => {
-            skewVelocity = e.velocity * 0.02;
-            gsap.to(skewContainer, {
-                skewY: gsap.utils.clamp(-1, 1, skewVelocity),
-                duration: 0.5,
-                ease: "power3.out"
-            });
-            // Return to 0
-            gsap.to(skewContainer, {
-                skewY: 0,
-                duration: 1,
-                delay: 0.1,
-                ease: "expo.out"
-            });
-        });
-
-        // --- THREE.JS BACKGROUND ---
-        const canvas = document.querySelector('#webgl');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Group for all elements
-        const sceneGroup = new THREE.Group();
-        scene.add(sceneGroup);
-
-        // Main geometric element
-        const geometry = new THREE.IcosahedronGeometry(2, 0);
-        const material = new THREE.MeshStandardMaterial({ 
-            color: 0xffffff, 
-            wireframe: true,
-            transparent: true,
-            opacity: 0.1
-        });
-        const mainMesh = new THREE.Mesh(geometry, material);
-        sceneGroup.add(mainMesh);
-
-        // Random floating shards
-        const shardGeom = new THREE.PlaneGeometry(0.5, 0.5);
-        for(let i=0; i<15; i++) {
-            const shard = new THREE.Mesh(shardGeom, material);
-            shard.position.set(
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 5
-            );
-            shard.rotation.set(Math.random(), Math.random(), Math.random());
-            sceneGroup.add(shard);
-        }
-
-        // Starfield
-        const pointsGeometry = new THREE.BufferGeometry();
-        const count = 1000;
-        const positions = new Float32Array(count * 3);
-        for(let i=0; i < count * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 20;
-        }
-        pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const pointsMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0x888888, transparent: true, opacity: 0.5 });
-        const particles = new THREE.Points(pointsGeometry, pointsMaterial);
-        scene.add(particles);
-
-        // Lights
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(2, 3, 4);
-        scene.add(pointLight);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-
-        camera.position.z = 5;
-
-        // Interaction
-        let mouseX = 0, mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) - 0.5;
-            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        // --- 1. PRELOADER SEQUENCE ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const fill = document.querySelector('.loader-bar-fill');
+            const percent = document.getElementById('loader-percent');
+            const loader = document.querySelector('.loader-wrap');
             
-            gsap.to('#cursor', { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power3.out" });
-        });
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 5) + 1;
+                if (progress > 100) progress = 100;
+                
+                fill.style.width = `${progress}%`;
+                percent.innerText = `${progress < 10 ? '0' : ''}${progress}%`;
 
-        const animate = () => {
-            const time = performance.now() * 0.0005;
-            mainMesh.rotation.y = time * 0.2;
-            mainMesh.rotation.x = time * 0.1;
-            
-            sceneGroup.rotation.y += (mouseX * 0.1 - sceneGroup.rotation.y) * 0.05;
-            sceneGroup.rotation.x += (-mouseY * 0.1 - sceneGroup.rotation.x) * 0.05;
-            
-            particles.rotation.y = time * 0.05;
-            
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        };
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // --- GSAP CORE ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Reveal Hero
-        const tl = gsap.timeline();
-        tl.from('.hero-fade', {
-            y: 60,
-            opacity: 0,
-            duration: 1.5,
-            stagger: 0.1,
-            ease: "expo.out",
-            delay: 0.2
-        });
-
-        // Parallax for all images
-        document.querySelectorAll('.parallax-img').forEach(img => {
-            gsap.to(img, {
-                yPercent: -20,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: img.parentElement,
-                    start: "top bottom",
-                    scrub: true
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(revealSite, 500);
                 }
-            });
-        });
+            }, 30);
 
-        // Mask Reveal for images
-        document.querySelectorAll('.reveal-mask').forEach(mask => {
-            gsap.to(mask, {
-                clipPath: 'inset(0% 0 0 0)',
-                duration: 1.5,
-                ease: "expo.inOut",
-                scrollTrigger: {
-                    trigger: mask,
-                    start: "top 85%",
-                }
-            });
-        });
-
-        // Story Reveal
-        gsap.from('.story-reveal', {
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: '#story',
-                start: "top 70%",
+            function revealSite() {
+                // GSAP Reveal Animation
+                const tl = gsap.timeline();
+                
+                tl.to(loader, {
+                    yPercent: -100,
+                    duration: 1.2,
+                    ease: "power4.inOut"
+                })
+                .from(".hero-text-1", {
+                    y: 150,
+                    opacity: 0,
+                    duration: 1.5,
+                    skewY: 5,
+                    ease: "power3.out"
+                }, "-=0.5")
+                .from(".hero-text-2", {
+                    y: -150,
+                    opacity: 0,
+                    duration: 1.5,
+                    skewY: 5,
+                    ease: "power3.out"
+                }, "-=1.3")
+                .to(".hero-image-block", {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 1.5,
+                    ease: "power2.out"
+                }, "-=1.5")
+                .from(".nav-bar", {
+                    y: -50,
+                    opacity: 0,
+                    duration: 1
+                }, "-=1");
             }
         });
 
-        // Timeline Line Grow
-        gsap.to('.timeline-line', {
-            height: '100%',
-            ease: "none",
+        // --- 2. CUSTOM CURSOR & MAGNETIC EFFECT ---
+        const cursor = document.getElementById('cursor');
+        const dot = document.getElementById('cursor-dot');
+        const targets = document.querySelectorAll('.hover-target');
+
+        // Smooth follow logic
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Dot moves instantly
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            // Lerp (Linear Interpolation) for delay
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover states
+        targets.forEach(target => {
+            target.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            target.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --- 3. SCROLL ANIMATIONS (GSAP SCROLLTRIGGER) ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // A. Image Parallax inside Hero
+        gsap.to(".hero-image-block img", {
+            scale: 1.2,
+            yPercent: 15,
             scrollTrigger: {
-                trigger: '#milestones',
-                start: "top 50%",
-                end: "bottom 50%",
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
                 scrub: true
             }
         });
 
-        // Milestones Reveal
-        gsap.from('.milestone-reveal', {
-            y: 40,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.3,
-            ease: "power2.out",
+        // B. Horizontal Text Separation on Scroll
+        gsap.to(".hero-text-1", {
+            xPercent: -15,
             scrollTrigger: {
-                trigger: '#milestones',
-                start: "top 60%",
-            }
-        });
-
-        // Principles Grid Reveal
-        gsap.from('.principle-reveal', {
-            y: 30,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: '.principle-reveal',
-                start: "top 80%",
-            }
-        });
-
-        // Blueprint Reveal
-        gsap.from('.blueprint-reveal', {
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: '#blueprint',
-                start: "top 70%",
-            }
-        });
-
-        // Blueprint Steps Stagger
-        gsap.from('.blueprint-step', {
-            y: 40,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.3,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: '#blueprint',
-                start: "top 60%",
-            }
-        });
-
-        // Vision Reveal
-        gsap.from('.vision-reveal', {
-            y: 60,
-            opacity: 0,
-            duration: 1.5,
-            stagger: 0.2,
-            ease: "expo.out",
-            scrollTrigger: {
-                trigger: '#vision',
-                start: "top 70%",
-            }
-        });
-
-        // 3D Camera Shift on Scroll
-        gsap.to(camera.position, {
-            z: 8,
-            y: -2,
-            scrollTrigger: {
-                trigger: "body",
+                trigger: ".hero",
                 start: "top top",
-                end: "bottom bottom",
+                end: "bottom top",
+                scrub: 1
+            }
+        });
+        gsap.to(".hero-text-2", {
+            xPercent: 15,
+            scrollTrigger: {
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
                 scrub: 1
             }
         });
 
-        // Magnetic Effect for Buttons and Nav
-        const magneticElements = document.querySelectorAll('.btn-3d, nav a');
-        magneticElements.forEach(el => {
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
-                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
-                gsap.to(el, { x, y, duration: 0.3 });
-            });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(el, { x: 0, y: 0, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+        // C. Journey Items Reveal
+        const items = document.querySelectorAll('.journey-item');
+        items.forEach(item => {
+            gsap.from(item, {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                }
             });
         });
 
-        // Cursor scaling
-        const cursor = document.querySelector('#cursor');
-        document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 4, opacity: 0.1 }));
-            el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, opacity: 1 }));
-        });
+        // --- 4. INTERACTIVE PARTICLE CANVAS ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        const particleCount = 60;
+        const connectionDistance = 150;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Mouse interaction repulsion
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if(dist < 200) {
+                    this.x -= dx * 0.01;
+                    this.y -= dy * 0.01;
+                }
+
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+
+            draw() {
+                ctx.fillStyle = "rgba(255,255,255,0.3)";
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+
+        for(let i=0; i<particleCount; i++) particles.push(new Particle());
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                
+                // Draw connections
+                for(let j = index; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+
+                    if (dist < connectionDistance) {
+                        ctx.strokeStyle = `rgba(255,255,255,${0.1 - (dist/connectionDistance)*0.1})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
 
     </script>
 </body>
